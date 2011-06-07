@@ -107,3 +107,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (  # debug required for debug query script/templat
     "django.core.context_processors.media",
     "cotd.context_processors.base_settings",
 )
+
+if IS_LOCAL is False:
+    from server_settings import *
