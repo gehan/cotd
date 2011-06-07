@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('views',
+urlpatterns = patterns('cotd.views',
     (r'^$',      'home'),
     (r'^token$', 'token'),
     
