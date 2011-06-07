@@ -4,7 +4,7 @@ import os
 TIMEZONE = 'UTC'
 os.environ['TZ'] = TIMEZONE
 
-IS_LOCAL = True
+IS_LOCAL = False
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
