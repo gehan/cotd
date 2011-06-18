@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import date
 import facegraph
+from model_fields import DataField
+from picklefield import PickledObjectField
 import random
 
 class COTD(models.Model):
@@ -25,7 +27,8 @@ class COTD(models.Model):
         if not self.photo:
             self.photo = self.captain.get_random_photo()
             self.save()
-        return self.photo
+        tag_x, tag_y = self.photo.get_tag(self.captain.fbid)
+        return self.photo, tag_x, tag_y
 
 class Captain(models.Model):
     name = models.CharField(max_length=255)
@@ -43,7 +46,7 @@ class Captain(models.Model):
     def get_random_photo(self):
         access_token = Config.objects.get().access_token
         graph = facegraph.Graph(access_token)
-        photos_node = graph[self.fbid].photos | ('fields', 'id, source') | ('limit', 500)
+        photos_node = graph[self.fbid].photos | ('fields', 'id, source,tags') | ('limit', 500)
         response = photos_node().as_dict()
         photos = response.get('data')
         n = 0
@@ -56,15 +59,30 @@ class Captain(models.Model):
             defaults = {'url': photo.get('source')}
             (photo_obj, created) = Photo.objects.get_or_create(pid=photo.get('id'), defaults=defaults)
             if created:
+                photo_obj.data.tags = photo.get('tags').get('data')
+                photo_obj.save()
                 break
         return photo_obj
     
 class Photo(models.Model):
     pid = models.CharField(max_length=255, unique=True)
     url = models.CharField(max_length=4096)
+    data_field = PickledObjectField(compress=True, default=dict)
 
     def __unicode__(self):
         return "id=%s, pid=%s, url=%s" % (self.pk, self.pid, self.url)
+    
+    @property
+    def data(self):
+        defaults = {}
+        return DataField(self, "data_field", defaults)
+    
+    def get_tag(self, fbid):
+        if self.data.tags:
+            for tag in self.data.tags:
+                if tag.get('id') == str(fbid):
+                    return tag.get('x'), tag.get('y')
+        return None, None
     
 class Config(models.Model):
     access_token = models.CharField(max_length=255)

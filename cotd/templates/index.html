@@ -6,9 +6,53 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Captain Of The Day</title>
     <link rel="stylesheet" type="text/css" href ="{{ media_url }}css/common.css" media="screen" />
+	<link href='http://fonts.googleapis.com/css?family=Wire+One&v1' rel='stylesheet' type='text/css'>
+	<script type="text/javascript" src="{{ media_url }}js/mootools-core-1.3-yc.js"></script>
+	<script>
+		var tag = {'x': {{ tag.x }}, 'y': {{ tag.y }}},
+		    tagPosition = {};
+        if (tag.x) {
+			tag.x = parseInt(tag.x, 10) / 100;
+			tag.y = parseInt(tag.y, 10) / 100;
+		}
+			
+		var positionArrow = function() {
+            var photo = $('photo'),
+                arrow = $('arrow'),
+                arrowSize = {},
+                photoSize = photo.getSize(),
+                photoPosition = photo.getPosition();
+            if (tag.x) {
+                arrow.setStyle('display', 'block');
+                arrowSize = arrow.getSize();
+                tagPosition.x = photoSize.x * tag.x + photoPosition.x + 20;
+                tagPosition.y = photoSize.y * tag.y + photoPosition.y - arrowSize.y;
+                arrow.setStyles({
+                    'top': tagPosition.y,
+                    'left': tagPosition.x 
+                });
+            }			
+		} 
+		document.addEvent('domready', function() {
+			$('photo').addEvent('load', function() {
+				var resizeTimeout;
+				positionArrow();
+				window.addEvent('resize', function() {
+					clearTimeout(resizeTimeout); 
+                    resizeTimeout = positionArrow.delay(500);
+				});
+			});
+		});
+	</script>
 </head>
 <body>
-	<h1>The Captain Of The Day is...{{ cotd.captain.name }}</h1>
-	<img src="{{ cotd.get_photo.url }}" />
+<div id="body">
+	<h1>The Captain Of The Day is...<br /><strong>{{ cotd.captain.name }}</strong></h1>
+	<img src="{{ photo.url }}" id="photo"/>
+	<div id="arrow" style="display: none">
+		<img src="{{media_url}}img/arrow_2.png" alt="" />
+		<span>Captain</span>
+	</div>
+</div>
 </body>
 </html

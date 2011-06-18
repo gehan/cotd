@@ -4,7 +4,7 @@ import os
 TIMEZONE = 'UTC'
 os.environ['TZ'] = TIMEZONE
 
-IS_LOCAL = False
+IS_LOCAL = True
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -58,13 +58,12 @@ MEDIA_ROOT = 'C:\\Users\\Gehan\\workspace\\cotd\\public\\media\\'
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 SERVER_BASE = "http://gehan.dynalias.net:8005/"
-MEDIA_DIR = "media"
-MEDIA_URL = '%s%s/' % (SERVER_BASE, MEDIA_DIR)
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'tvkk^=bm%8qswr3wmy@&wor=4@5+483f2$=^nq3b9$e=e5of8c'
@@ -100,6 +99,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'cotd',
+    'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (  # debug required for debug query script/template

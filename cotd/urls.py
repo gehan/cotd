@@ -14,5 +14,6 @@ urlpatterns = patterns('cotd.views',
 # For local media
 if getattr(settings, 'IS_LOCAL', False):
     urlpatterns += patterns('',
-        (r'^%s/(?P<path>.*)$'%settings.MEDIA_DIR, 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT,
+                                                                               'show_indexes': True}),
     )
